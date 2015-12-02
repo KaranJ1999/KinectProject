@@ -14,16 +14,18 @@ public PVector v2;
 
 void setup()
 {
+  frameRate(30);
   size(640, 480);
   background(0);
   kinect = new Kinect(this);
   smooth();
   box2d = new Box2DProcessing(this);
   box2d.createWorld();
+  box2d.setGravity(0, -20);
   bodies = new ArrayList<SkeletonData>();
   boundaries = new ArrayList<Boundary>();
-  boundaries.add(new Boundary(width/2, 0, width, 5));
-  //boundaries.add(new Boundary(width/2, height, width, 5));
+  //boundaries.add(new Boundary(width, 0, width/2, 5));
+  boundaries.add(new Boundary(width/2, height, width, 5));
   boundaries.add(new Boundary(width, height/2, 5, height));
   boundaries.add(new Boundary(0, height/2, 5, height));
   boxes = new ArrayList<Box>();
@@ -31,15 +33,14 @@ void setup()
  
 void draw()
 {
+  background(255, 120, 120);
   box2d.step();
    if (random(1) < 0.1) {
-    Box p = new Box(random(width),random(height));
+    Box p = new Box(random(width),random(0, 20));
     boxes.add(p);
   }
-  background(0);
-  image(kinect.GetImage(), 0, 0, width, height);
-  //image(kinect.GetDepth(), 320, 240, 320, 240);
-  //image(kinect.GetMask(), 0, 240, 320, 240);
+ // image(kinect.GetDepth(), 0, 0, width, height);
+  image(kinect.GetMask(), 0, 0, width, height);
   for (int i=0; i<bodies.size (); i++) 
   {
     drawSkeleton(bodies.get(i));
@@ -83,6 +84,10 @@ void DrawBone(SkeletonData _s, int _j1, int _j2)
     _s.skeletonPositionTrackingState[_j2] != Kinect.NUI_SKELETON_POSITION_NOT_TRACKED)
     {
       circle.display();
+      for(Box b: boxes)
+      {
+        circle.attract(b);
+      }
     }
    v2 = new PVector(_s.skeletonPositions[_j1].x*width, 
     _s.skeletonPositions[_j1].y*height);

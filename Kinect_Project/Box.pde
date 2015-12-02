@@ -43,13 +43,12 @@ class Box {
     Vec2 pos = box2d.getBodyPixelCoord(body);
     // Get its angle of rotation
     float a = body.getAngle();
-
     rectMode(CENTER);
     pushMatrix();
     translate(pos.x, pos.y);
     rotate(-a);
-    fill(175);
-    stroke(0);
+    fill(255);
+    noStroke();
     rect(0, 0, w, h);
     popMatrix();
   }
